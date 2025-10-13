@@ -19,3 +19,5 @@ git add environment.yml git commit -m "Update environment: add scikit-learn" git
 
 conda env update --file environment.yml --prune 
 conda activate Assignment3
+
+// fart
