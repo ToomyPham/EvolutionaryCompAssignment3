@@ -2,7 +2,8 @@ Conda Help Instructions:
 
 //Activate
 
-conda activate Assignment3 conda deactivate
+conda activate Assignment3 
+conda deactivate
 
 //How to initialize the assignment
 
@@ -16,4 +17,5 @@ git add environment.yml git commit -m "Update environment: add scikit-learn" git
 
 //How to use the updated environment
 
-conda env update --file environment.yml --prune conda activate Assignment3
+conda env update --file environment.yml --prune 
+conda activate Assignment3
