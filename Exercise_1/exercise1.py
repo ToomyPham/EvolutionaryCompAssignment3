@@ -94,3 +94,55 @@ def ga(problem, budget: int, rng: np.random.Generator) -> None:
             new_fitness[worst_idx] = fitness[elite_idx]
         
         population, fitness = offspring, new_fitness
+
+@dataclass
+class AlgoSpec:
+    name: str
+    fn: Callable
+
+def attach_logger(problem, root: str, algo_name: str, instance_id: int, run_idx: int):
+
+    log = logger.Analyzer(
+        root = root,
+        folder_name = f"{algo_name}",
+        algorithm_name = algo_name,
+        store_position = False,
+    )
+    log.set_experiment_attributes({
+        "instance": instance_id,
+        "run": run_idx,
+        "algorithm": algo_name,
+    })
+    problem.attach_logger(log)
+    return log
+
+def run_all(root: str, runs: int, budget: int, seed: int | None):
+    rng_master = np.random.default_rng(seed)
+
+    algos: List[AlgoSpec] = [
+        AlgoSpec("RLS", rls),
+        AlgoSpec("(1+1)EA", one_plus_one_ea),
+        AlgoSpec("GA", ga),
+    ]
+
+    for pid in PROBLEM_IDS:
+        for algo in algos:
+            for r in range(1, runs + 1):
+                run_seed = int(rng_master.integers(0, 2**63 - 1))
+                rng = np.random.default_rng(run_seed)
+
+                problem = get_problem(pid, problem_class = ProblemClass.GRAPH)
+
+                log = attach_logger(problem, root = root, algo_name = algo.name, instance_id = pid, run_idx = r)
+                
+                algo.fn(problem, budget = budget, rng = rng)
+
+                problem.detach_logger()
+                del log
+                del problem
+
+def main(root="results/submodular", runs=30, budget=10000, seed=42):
+    run_all(root=root,runs=runs,budget=budget,seed=seed)
+
+if __name__ == "__main__":
+    main()
