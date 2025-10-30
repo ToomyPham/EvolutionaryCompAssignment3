@@ -5,6 +5,33 @@ from typing import Callable, Dict, List, Tuple
 import numpy as np
 from ioh import get_problem, ProblemClass, logger
 
+def graph_family(pid: int) -> str:
+    if 2100 <= pid <= 2103: return "MaxCoverage"
+    if 2200 <= pid <= 2203: return "MaxInfluence"
+    if 2300 <= pid <= 2302: return "PackWhileTravel"
+    return "Other"
+
+def make_logger(root: str, folder: str, algo_name: str, algo_info: str = ""):
+    return logger.Analyzer(
+        root=root,
+        folder_name=folder,         # <-- nested path lives here
+        algorithm_name=algo_name,
+        algorithm_info=algo_info,   # optional; shows in IOHanalyzer
+        store_positions=False,
+    )
+
+def robust_attach(problem, L) -> None:
+    try:
+        L.attach_problem(problem)   # newer API
+    except Exception:
+        problem.attach_logger(L)    # older API
+
+def robust_detach(problem, L) -> None:
+    try: problem.detach_logger()
+    except Exception: pass
+    try: L.close()
+    except Exception: pass
+
 PROBLEM_IDS = [
     2100, 2101, 2102, 2103,
     2200, 2201, 2202, 2203,
@@ -12,7 +39,7 @@ PROBLEM_IDS = [
 ]
 
 def budget_reached(problem, budget: int) -> bool:
-    return problem.state.evaluation >= budget
+    return problem.state.evaluations >= budget
 
 def random_bitstring(n: int, rng: np.random.Generator) -> np.ndarray:
     return rng.integers(0, 2, size=n, dtype=np.int8)
@@ -37,7 +64,7 @@ def tournament_select(pop, fits, rng: np.random.Generator, k: int = 2) -> np.nda
     return pop[i] if fits[i] >= fits[j] else pop[j]
 
 def rls(problem, budget: int, rng: np.random.Generator) -> None:
-    n = problem.meta_data.m_variables
+    n = problem.meta_data.n_variables
     x = random_bitstring(n, rng)
     fx = problem(x)
     while not budget_reached(problem, budget):
@@ -100,21 +127,7 @@ class AlgoSpec:
     name: str
     fn: Callable
 
-def attach_logger(problem, root: str, algo_name: str, instance_id: int, run_idx: int):
 
-    log = logger.Analyzer(
-        root = root,
-        folder_name = f"{algo_name}",
-        algorithm_name = algo_name,
-        store_position = False,
-    )
-    log.set_experiment_attributes({
-        "instance": instance_id,
-        "run": run_idx,
-        "algorithm": algo_name,
-    })
-    problem.attach_logger(log)
-    return log
 
 def run_all(root: str, runs: int, budget: int, seed: int | None):
     rng_master = np.random.default_rng(seed)
@@ -130,16 +143,32 @@ def run_all(root: str, runs: int, budget: int, seed: int | None):
             for r in range(1, runs + 1):
                 run_seed = int(rng_master.integers(0, 2**63 - 1))
                 rng = np.random.default_rng(run_seed)
+                problem = get_problem(pid, problem_class=ProblemClass.GRAPH)
 
-                problem = get_problem(pid, problem_class = ProblemClass.GRAPH)
+                fam = graph_family(pid)                         # e.g., "MaxCoverage"
+                folder = f"{algo.name}/{fam}/F{pid}"            # mirrors MMAS style
+                algo_info = f"{algo.name} on {fam} F{pid}"
 
-                log = attach_logger(problem, root = root, algo_name = algo.name, instance_id = pid, run_idx = r)
-                
-                algo.fn(problem, budget = budget, rng = rng)
+                L = make_logger(root, folder, algo.name, algo_info)
 
-                problem.detach_logger()
-                del log
+                # (optional) attributes for filtering in IOHanalyzer — must be strings
+                try:
+                    L.set_experiment_attributes({
+                        "algorithm": str(algo.name),
+                        "family": fam,
+                        "instance": str(pid),
+                        "run": str(r),
+                    })
+                except Exception:
+                    pass
+
+                robust_attach(problem, L)
+
+                algo.fn(problem, budget=budget, rng=rng)
+
+                robust_detach(problem, L)
                 del problem
+
 
 def main(root="results/submodular", runs=30, budget=10000, seed=42):
     run_all(root=root,runs=runs,budget=budget,seed=seed)
