@@ -1,0 +1,3 @@
+    Tommy Pham - a1889846
+1. implemented GSEMO for exercise 2
+2. improved runtime of GSEMO
