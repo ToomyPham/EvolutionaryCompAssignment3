@@ -15,10 +15,7 @@ import os
 from typing import List, Tuple
 
 import numpy as np
-import ioh  # pip install ioh
-
-
-# ------------------------------ CONFIG ----------------------------------------
+import ioh
 
 PROBLEM_IDS = {
     "coverage":  [2100, 2101, 2102, 2103],  # MaxCoverage
@@ -34,8 +31,6 @@ SEED_BASE = 42
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_ROOT = os.path.join(THIS_DIR, "results")
 
-
-# ------------------------------ GSEMO -----------------------------------------
 
 def _dominates(a: Tuple[float, float], b: Tuple[float, float]) -> bool:
     """
