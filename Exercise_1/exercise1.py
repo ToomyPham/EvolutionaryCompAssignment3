@@ -139,35 +139,38 @@ def run_all(root: str, runs: int, budget: int, seed: int | None):
     ]
 
     for pid in PROBLEM_IDS:
+        # create the problem ONCE per pid (reuse across runs via reset)
+        problem = get_problem(pid, problem_class=ProblemClass.GRAPH)
+        fam = graph_family(pid)
+
         for algo in algos:
+            # create ONE logger per (pid, algo)
+            folder = f"{algo.name}/{fam}/F{pid}"
+            algo_info = f"{algo.name} on {fam} F{pid}"
+            L = make_logger(root, folder, algo.name, algo_info)
+
+            try:
+                L.set_experiment_attributes({
+                    "algorithm": str(algo.name),
+                    "family": fam,
+                    "instance": str(pid),
+                })
+            except Exception:
+                pass
+
+            robust_attach(problem, L)
+
+            # multiple runs into the SAME IOH dataset
             for r in range(1, runs + 1):
                 run_seed = int(rng_master.integers(0, 2**63 - 1))
                 rng = np.random.default_rng(run_seed)
-                problem = get_problem(pid, problem_class=ProblemClass.GRAPH)
-
-                fam = graph_family(pid)                         # e.g., "MaxCoverage"
-                folder = f"{algo.name}/{fam}/F{pid}"            # mirrors MMAS style
-                algo_info = f"{algo.name} on {fam} F{pid}"
-
-                L = make_logger(root, folder, algo.name, algo_info)
-
-                # (optional) attributes for filtering in IOHanalyzer — must be strings
-                try:
-                    L.set_experiment_attributes({
-                        "algorithm": str(algo.name),
-                        "family": fam,
-                        "instance": str(pid),
-                        "run": str(r),
-                    })
-                except Exception:
-                    pass
-
-                robust_attach(problem, L)
 
                 algo.fn(problem, budget=budget, rng=rng)
+                problem.reset()
 
-                robust_detach(problem, L)
-                del problem
+            robust_detach(problem, L)
+
+        del problem
 
 
 def main(root="results/submodular", runs=30, budget=10000, seed=42):
