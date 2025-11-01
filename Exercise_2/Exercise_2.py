@@ -1,19 +1,3 @@
-# Exercise_2.py
-# Single-file Exercise 2:
-# - Implements GSEMO (multi-objective, Week 8)
-# - Runs all required instances with IOH logging
-# - Saves EVERYTHING under Exercise_2/results/
-# - Optional plotting of trade-off (first-run) scatter from saved pareto.json
-#
-# Usage:
-#   pip install ioh numpy matplotlib
-#   # Run experiments only:
-#   python Exercise_2.py --runs 30 --budget 10000
-#   # Run + also make trade-off plots for all instances:
-#   python Exercise_2.py --runs 30 --budget 10000 --plot
-#   # Only plot (assuming results/ already exists from a previous run):
-#   python Exercise_2.py --plot-only
-
 import argparse
 import json
 import os
@@ -28,34 +12,26 @@ PROBLEM_IDS = {
     "pwt":       [2300, 2301, 2302],
 }
 
+# Default parameters for runs & budget
 RUNS_DEFAULT = 30
 BUDGET_DEFAULT = 10_000
 SEED_BASE = 42
 
+# Directories for results and plots
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_ROOT = os.path.join(THIS_DIR, "results")
 PLOTS_DIR = os.path.join(RESULTS_ROOT, "plots", "tradeoffs")
 
+# dominance check for 2D objectives 
 def _dominates(a: Tuple[float, float], b: Tuple[float, float]) -> bool:
-    """Pareto dominance for 'maximize both' objectives."""
     return all(ai >= bi for ai, bi in zip(a, b)) and any(ai > bi for ai, bi in zip(a, b))
 
-
+# this is the GSEMO implementation from lectures
+# with minor adjustments for our bi-objective setting
 def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
-    """
-    GSEMO for (mono)tone submodular optimisation (Week 8 formulation).
-
-    - If k is not None (MaxCoverage/MaxInfluence): objectives = (z(x), -|S|)
-      with z(x) = f(x) if |S| <= k else -1 (infeasible sentinel).
-    - If k is None (PWT): objectives = (f(x), -|S|).
-
-    Returns:
-      best_x: np.ndarray (binary solution)
-      best_f: (f1, f2)
-      pareto: list of (x, (f1,f2)) nondominated points discovered
-    """
     n = problem.meta_data.n_variables
 
+    # bi-objective (f(x), -|x|)
     if k is None:
         def obj(x: np.ndarray) -> Tuple[float, float]:
             fx = float(problem(x))
@@ -74,12 +50,13 @@ def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
     P.append((x0, obj(x0)))
     evals = 2
 
+    # this is the main loop of GSEMO
     while evals < budget:
         pidx = rng.integers(len(P))
         parent = P[pidx][0]
 
         flips = rng.random(n) < (1.0 / n)
-        if not flips.any():
+        if not flips.any(): # this ensures at least one bit flip
             flips[rng.integers(n)] = True
 
         child = parent.copy()
@@ -89,29 +66,25 @@ def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
         evals += 1
 
         keep, dominated_flag = [], False
-        for (z, fz) in P:
-            if _dominates(fchild, fz):
+        for (z, fz) in P: # these lines of code maintain the Pareto set
+            if _dominates(fchild, fz):# this checks if fchild dominates fz
                 continue
-            if _dominates(fz, fchild):
+            if _dominates(fz, fchild):# this checks if fz dominates fchild 
                 dominated_flag = True
             keep.append((z, fz))
-        if not dominated_flag:
+        if not dominated_flag: # only add child if its not dominated
             keep.append((child, fchild))
         P = keep
 
     best = max(P, key=lambda t: t[1][0])
     return best[0], best[1], P
 
+# helper function to load a problem instance
 def get_problem(problem_id: int):
-    """Load GRAPH-class problem instance from IOH."""
     return ioh.get_problem(problem_id, problem_class=ioh.ProblemClass.GRAPH)
 
-
+# these lines of code set up logging with IOH Analyzer
 def make_logger(algo_name: str, problem_id: int, run_id: int):
-    """
-    Create IOH Analyzer logger writing under Exercise_2/results/.
-    (Do not pass 'suite_name' – not in current API.)
-    """
     outdir = os.path.join(RESULTS_ROOT, algo_name, str(problem_id), f"run_{run_id}")
     os.makedirs(outdir, exist_ok=True)
     return ioh.logger.Analyzer(
@@ -129,9 +102,8 @@ def attach_logger(problem, logger):
 def seeded_rng(seed: int):
     return np.random.default_rng(seed)
 
-
+# helper function to dump Pareto front to JSON
 def dump_pareto(pareto, outpath: str):
-    """Save Pareto set (for run 0) as JSON for later plotting/analysis."""
     os.makedirs(os.path.dirname(outpath), exist_ok=True)
     data = []
     for x, f in pareto:
@@ -144,9 +116,8 @@ def dump_pareto(pareto, outpath: str):
     with open(outpath, "w") as fh:
         json.dump(data, fh, indent=2)
 
-
+# these lines of code are the helper function to detect uniform cardinality k from problem metadata
 def detect_k(problem) -> int:
-    """Infer uniform cardinality k from metadata; fallback to 10."""
     meta = getattr(problem, "meta_data", None)
     info = getattr(meta, "info", {}) or {}
     for key in ("k", "budget", "constraint_k", "cardinality"):
@@ -157,12 +128,8 @@ def detect_k(problem) -> int:
                 pass
     return 10
 
+# these lines of code run groups of experiments
 def run_group(problem_ids: List[int], runs: int, budget: int, use_k: bool):
-    """
-    Run GSEMO on a list of problem IDs.
-    - use_k=True  -> Coverage & Influence (uniform constraint)
-    - use_k=False -> PWT (no k)
-    """
     for pid in problem_ids:
         for r in range(runs):
             rng = seeded_rng(SEED_BASE + 2000 * r + pid)
@@ -176,24 +143,22 @@ def run_group(problem_ids: List[int], runs: int, budget: int, use_k: bool):
                 k = detect_k(problem) if use_k else None
                 _, _, pareto = gsemo(problem, budget, rng, k=k)
 
-                if r == 0:
+                if r == 0: # if r == 0, it saves the Pareto front to JSON
                     out = os.path.join(RESULTS_ROOT, algo_tag, str(pid), f"run_{r}", "pareto.json")
                     dump_pareto(pareto, out)
 
             finally:
                 problem.detach_logger()
 
-
+# these lines of code run all experiments for Exercise 2 
 def run_experiments(runs: int, budget: int):
     run_group(PROBLEM_IDS["coverage"], runs, budget, use_k=True)
     run_group(PROBLEM_IDS["influence"], runs, budget, use_k=True)
     run_group(PROBLEM_IDS["pwt"], runs, budget, use_k=False)
 
+# These plots the trade-off scatter from saved pareto.json files and saves as PNG
 def plot_tradeoff_for(algo_tag: str, problem_id: int, run_index: int = 0):
-    """
-    Create a trade-off (|S| vs objective value) scatter from pareto.json
-    and save under Exercise_2/results/plots/tradeoffs/.
-    """
+
     try:
         import matplotlib.pyplot as plt
     except Exception as e:
@@ -218,18 +183,14 @@ def plot_tradeoff_for(algo_tag: str, problem_id: int, run_index: int = 0):
     plt.scatter(xs, ys, s=25)
     plt.xlabel("|S|")
     plt.ylabel("Objective value")
-    plt.title(f"Trade-off (first run) – {algo_tag} – {problem_id}")
+    plt.title(f"Trade-off – {algo_tag} – {problem_id}")
     plt.tight_layout()
     plt.savefig(out_png, dpi=150)
     plt.close()
 
-    print(f"✅ Saved trade-off plot: {out_png}")
-
-
+# these lines of code plot trade-offs for all instances
 def plot_all_tradeoffs():
-    """
-    Generate trade-off plots (first run) for all required instances, if pareto.json exists.
-    """
+
     for pid in PROBLEM_IDS["coverage"]:
         plot_tradeoff_for("GSEMO", pid, 0)
     for pid in PROBLEM_IDS["influence"]:
@@ -249,10 +210,8 @@ if __name__ == "__main__":
 
     if not args.plot_only:
         run_experiments(args.runs, args.budget)
-        print(f"\n✅ Experiments complete. All logs & pareto.json saved under:\n   {RESULTS_ROOT}\n")
 
     if args.plot or args.plot_only:
         plot_all_tradeoffs()
-        print(f"\n📊 Plots (if generated) saved under:\n   {PLOTS_DIR}\n")
 
     print("Done.")
