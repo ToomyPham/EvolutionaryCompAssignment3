@@ -1,0 +1,11 @@
+After implementing the code, the algorithm was tested and left to collect data for all the the MaxCoverage and MaxInfluence ploblems.
+The data was then plotted for analysis and shows that the MaxCoverage displayed a consistant exponential growth and showed a steep curve 
+when the number of selected nodes were between 0 - 4. This shows that adding nodes gives large gains in coverage and displays a strong
+marginal return. Between 5-7 selected nodes, the improvement begins to slow down and begin showing deminishing returns. After 8 onwards,
+the GSEMO was reaching the optimal region where the function began to converge. The MaxInfluence showed a similar trade-off plot to the
+MaxCoverage. Although the MaxInfluence had a much greater objective value increase early on and began to have a slower and consistant
+increase after 1. MaxInfluence all displayed exponential growth but rather a fast growth in the beginning and almost a linear growth after
+some time. The PWT shows also an exponential growth but a rather sharp and quick drop off in returns around 9 selected nodes for the 2300 PWT.
+The PWT 2301 displayed a very linear growth, suggesting a balanced trade-off between value and travel cost, therefore linearly proportional to
+one another. the PWT 2302 shows two distinct linear clusters of points, suggesting that the two regions of data are seperated from an suboptimal
+zone, indicating the presence of a conflicting objective, where nether light or heavy solutions are good. 

@@ -20,28 +20,21 @@ import os
 from typing import List, Tuple
 
 import numpy as np
-import ioh  # pip install ioh
-
-
-# ------------------------------ CONFIG ----------------------------------------
+import ioh
 
 PROBLEM_IDS = {
-    "coverage":  [2100, 2101, 2102, 2103],  # MaxCoverage
-    "influence": [2200, 2201, 2202, 2203],  # MaxInfluence
-    "pwt":       [2300, 2301, 2302],        # PackWhileTravel
+    "coverage":  [2100, 2101, 2102, 2103],
+    "influence": [2200, 2201, 2202, 2203],
+    "pwt":       [2300, 2301, 2302],
 }
 
 RUNS_DEFAULT = 30
 BUDGET_DEFAULT = 10_000
 SEED_BASE = 42
 
-# Save all outputs inside Exercise_2/results/
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_ROOT = os.path.join(THIS_DIR, "results")
-PLOTS_DIR = os.path.join(RESULTS_ROOT, "plots", "tradeoffs")  # where PNGs go
-
-
-# ------------------------------ GSEMO -----------------------------------------
+PLOTS_DIR = os.path.join(RESULTS_ROOT, "plots", "tradeoffs")
 
 def _dominates(a: Tuple[float, float], b: Tuple[float, float]) -> bool:
     """Pareto dominance for 'maximize both' objectives."""
@@ -74,7 +67,6 @@ def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
             z = fx if size <= k else -1.0
             return (z, float(-size))
 
-    # Initialise population with empty set + random point
     empty = np.zeros(n, dtype=int)
     P: List[Tuple[np.ndarray, Tuple[float, float]]] = [(empty, obj(empty))]
 
@@ -83,11 +75,9 @@ def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
     evals = 2
 
     while evals < budget:
-        # Uniform parent selection
         pidx = rng.integers(len(P))
         parent = P[pidx][0]
 
-        # 1/n-bit mutation, ensure at least one flip
         flips = rng.random(n) < (1.0 / n)
         if not flips.any():
             flips[rng.integers(n)] = True
@@ -98,24 +88,19 @@ def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
         fchild = obj(child)
         evals += 1
 
-        # Pareto update of P
         keep, dominated_flag = [], False
         for (z, fz) in P:
-            if _dominates(fchild, fz):  # child dominates z
+            if _dominates(fchild, fz):
                 continue
-            if _dominates(fz, fchild):  # z dominates child
+            if _dominates(fz, fchild):
                 dominated_flag = True
             keep.append((z, fz))
         if not dominated_flag:
             keep.append((child, fchild))
         P = keep
 
-    # Best by first objective component
     best = max(P, key=lambda t: t[1][0])
     return best[0], best[1], P
-
-
-# --------------------------- IOH HELPERS --------------------------------------
 
 def get_problem(problem_id: int):
     """Load GRAPH-class problem instance from IOH."""
@@ -172,9 +157,6 @@ def detect_k(problem) -> int:
                 pass
     return 10
 
-
-# ------------------------------ RUNNERS ---------------------------------------
-
 def run_group(problem_ids: List[int], runs: int, budget: int, use_k: bool):
     """
     Run GSEMO on a list of problem IDs.
@@ -194,26 +176,18 @@ def run_group(problem_ids: List[int], runs: int, budget: int, use_k: bool):
                 k = detect_k(problem) if use_k else None
                 _, _, pareto = gsemo(problem, budget, rng, k=k)
 
-                # Save Pareto front JSON for first run only (used for trade-off plots)
                 if r == 0:
                     out = os.path.join(RESULTS_ROOT, algo_tag, str(pid), f"run_{r}", "pareto.json")
                     dump_pareto(pareto, out)
 
             finally:
-                # Always detach to flush logs
                 problem.detach_logger()
 
 
 def run_experiments(runs: int, budget: int):
-    # 1) MaxCoverage (uniform k)   2100–2103
     run_group(PROBLEM_IDS["coverage"], runs, budget, use_k=True)
-    # 2) MaxInfluence (uniform k)  2200–2203
     run_group(PROBLEM_IDS["influence"], runs, budget, use_k=True)
-    # 3) PackWhileTravel (no k)    2300–2302
     run_group(PROBLEM_IDS["pwt"], runs, budget, use_k=False)
-
-
-# ------------------------------- PLOTTING -------------------------------------
 
 def plot_tradeoff_for(algo_tag: str, problem_id: int, run_index: int = 0):
     """
@@ -221,21 +195,21 @@ def plot_tradeoff_for(algo_tag: str, problem_id: int, run_index: int = 0):
     and save under Exercise_2/results/plots/tradeoffs/.
     """
     try:
-        import matplotlib.pyplot as plt  # local import so script works without it if not plotting
+        import matplotlib.pyplot as plt
     except Exception as e:
-        print("⚠️ matplotlib is not installed. Install with: pip install matplotlib")
+        print("matplotlib is not installed. Install with: pip install matplotlib")
         return
 
     src = os.path.join(RESULTS_ROOT, algo_tag, str(problem_id), f"run_{run_index}", "pareto.json")
     if not os.path.exists(src):
-        print(f"❌ Missing pareto.json: {src} (run experiments first)")
+        print(f"Missing pareto.json: {src} (run experiments first)")
         return
 
     with open(src, "r") as fh:
         pts = json.load(fh)
 
-    xs = [-p["f2"] for p in pts]  # |S|
-    ys = [ p["f1"] for p in pts]  # objective value
+    xs = [-p["f2"] for p in pts] 
+    ys = [ p["f1"] for p in pts] 
 
     os.makedirs(PLOTS_DIR, exist_ok=True)
     out_png = os.path.join(PLOTS_DIR, f"{algo_tag}_{problem_id}_run{run_index}.png")
