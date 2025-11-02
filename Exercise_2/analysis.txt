@@ -12,3 +12,11 @@ some time. The PWT shows also an exponential growth but a rather sharp and quick
 The PWT 2301 displayed a very linear growth, suggesting a balanced trade-off between value and travel cost, therefore linearly proportional to
 one another. the PWT 2302 shows two distinct linear clusters of points, suggesting that the two regions of data are seperated from an suboptimal
 zone, indicating the presence of a conflicting objective, where nether light or heavy solutions are good. 
+
+The fixed-budget results show that GSEMO performs efficiently across all submodular problem types under  10,000 evaluations. the MaxCoverage, the
+curves rise sharply in the early stages and quickly plateaus through out the evaluations, meaning the algorithm reaches near-optimal fitness values.
+The small variance suggests a high stable and consistant convergence across the runs. In the MaxInfluence, the improvement in the best fitness is
+much slower and gradual, suggesting a higher complexity. the wider std indicates and increase in variation between runs. Finally the PWT showed an
+instant increase on the PWT 2300, where the 2301 displayed a more gradual increase, suggesting fitness due to the more challenging trade-off between 
+profit and travel distance. As evaluations increase, it can be seen that the fitness consistently improves and stabilises, especially later
+where it shows strong, almost linear gains.
