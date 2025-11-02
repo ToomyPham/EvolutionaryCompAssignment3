@@ -1,0 +1,21 @@
+{
+  "algorithm_name": "multi",
+  "instance": 2100,
+  "population": 50,
+  "run_id": 26,
+  "dimension": 40,
+  "budget": 10000,
+  "seed": 2143,
+  "selection": "uniform",
+  "lines_written": 10000,
+  "best_so_far": 76.0,
+  "start_time": "2025-11-02T13:13:08.085868",
+  "end_time": "2025-11-02T13:13:08.243070",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python_version": "3.11.13",
+  "hostname": "Manith",
+  "variant": "PopulationGSEMO",
+  "elapsed_seconds": 0.15657687187194824,
+  "algorithm_type": "PopulationGSEMO",
+  "run_summary_best": 19.0
+}

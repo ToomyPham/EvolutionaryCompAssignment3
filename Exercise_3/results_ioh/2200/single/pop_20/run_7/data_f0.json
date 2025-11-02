@@ -1,0 +1,21 @@
+{
+  "algorithm_name": "single",
+  "instance": 2200,
+  "population": 20,
+  "run_id": 7,
+  "dimension": 40,
+  "budget": 10000,
+  "seed": 1734,
+  "selection": "tournament",
+  "lines_written": 10022,
+  "best_so_far": 69.0,
+  "start_time": "2025-11-02T13:16:35.054549",
+  "end_time": "2025-11-02T13:16:35.085612",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python_version": "3.11.13",
+  "hostname": "Manith",
+  "variant": "populationEA",
+  "elapsed_seconds": 0.0305483341217041,
+  "algorithm_type": "PopulationEA",
+  "run_summary_best": 46.0
+}
