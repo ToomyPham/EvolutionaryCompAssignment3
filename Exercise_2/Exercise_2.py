@@ -2,10 +2,10 @@ import argparse
 import json
 import os
 from typing import List, Tuple
-
 import numpy as np
 import ioh
 
+# problem ids for each submodular problem type
 PROBLEM_IDS = {
     "coverage":  [2100, 2101, 2102, 2103],
     "influence": [2200, 2201, 2202, 2203],
@@ -43,10 +43,10 @@ def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
             z = fx if size <= k else -1.0
             return (z, float(-size))
 
-    empty = np.zeros(n, dtype=int)
+    empty = np.zeros(n, dtype = int)
     P: List[Tuple[np.ndarray, Tuple[float, float]]] = [(empty, obj(empty))]
 
-    x0 = rng.integers(0, 2, size=n, dtype=int)
+    x0 = rng.integers(0, 2, size = n, dtype = int)
     P.append((x0, obj(x0)))
     evals = 2
 
@@ -76,14 +76,14 @@ def gsemo(problem, budget: int, rng: np.random.Generator, k: int = None):
             keep.append((child, fchild))
         P = keep
 
-    best = max(P, key=lambda t: t[1][0])
+    best = max(P, key = lambda t: t[1][0])
     return best[0], best[1], P
 
 # helper function to load a problem instance
 def get_problem(problem_id: int):
     return ioh.get_problem(problem_id, problem_class=ioh.ProblemClass.GRAPH)
 
-# these lines of code set up logging with IOH Analyzer
+# these lines of code set up logging with IOH Analyser
 def make_logger(algo_name: str, problem_id: int, run_id: int):
     outdir = os.path.join(RESULTS_ROOT, algo_name, str(problem_id), f"run_{run_id}")
     os.makedirs(outdir, exist_ok=True)
@@ -198,6 +198,7 @@ def plot_all_tradeoffs():
     for pid in PROBLEM_IDS["pwt"]:
         plot_tradeoff_for("GSEMO_PWT", pid, 0)
 
+# main function to parse arguments and run experiments/plots 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exercise 2 — GSEMO with IOH logging (results + optional plots).")
     parser.add_argument("--runs", type=int, default=RUNS_DEFAULT, help="Runs per instance (default: 30)")
@@ -208,10 +209,10 @@ if __name__ == "__main__":
 
     os.makedirs(RESULTS_ROOT, exist_ok=True)
 
-    if not args.plot_only:
+    if not args.plot_only: # if not plot_only, then run experiments
         run_experiments(args.runs, args.budget)
 
-    if args.plot or args.plot_only:
+    if args.plot or args.plot_only: # if plot or plot_only, then generate plots
         plot_all_tradeoffs()
 
     print("Done.")

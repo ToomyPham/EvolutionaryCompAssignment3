@@ -1,3 +1,7 @@
     Tommy Pham - a1889846
 1. implemented GSEMO for exercise 2
 2. improved runtime of GSEMO
+3. tested and acquired data for Exercise 2
+3. implemented plotting to Exercise 2
+4. wrote the analysis for Exercise 2
+5. 
