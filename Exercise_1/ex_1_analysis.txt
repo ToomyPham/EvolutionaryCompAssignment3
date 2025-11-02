@@ -1,0 +1,19 @@
+We implemented three different algoritms for part one. These were (1+1) EA, RLS and the same genetic algorithm that
+was used in the previous assignment 2. These algorithms were tested with three different types of problems, these
+being MaxCoverage, MaxInfluence, and PackWhileTravel. For the MaxCoverage problems it was noted that the (1+1) EA
+performed better than both RLS and the GA. (1+1) EA performed slightly slower than the RLS algorithm but it would
+overtake the RLS algorithm and provide a better result. The genetic algorithm was slowest but would eventually peak 
+with a similar results to that of the (1+1) EA. For the MaxInfluence problem the RLS performed better than the (1+1)
+EA but only marginally better. Both algorithms got very similar average final results and worked at similar speeds.
+The genetic algorithm very much struggled with this problem and performed very poorly. It achieved average results
+approximately half that of both RLS and (1+1) EA. The genetic algorithm could have most likely been greatly improved
+but needing to use the same algorithm from the previous assignment meant this was not possible. Results did differ
+for the three PackWhileTravel problems. For problem 2300, (1+1) EA peaked first and was shortly followed by RLS. Unlike
+the previous problems though the GA actaully provided a better value than the other algorithms, it just took it longer
+to get going. For problem 2301, RLS peaks first followed by (1+1) EA. This time the genetic algorithm also got much
+better results but came in second, behing RLS. Finally, for problem 2302, (1+1) EA performs the best followed by RLS.
+Unlike the previous PackWhileTravel problems the GA performs very badly and does not get results close to either of the 
+other algorithms. Looking at all these results I think it is clear that both RLS and (1+1) EA are solid algorithms to use
+for either of these problems. A genetic algorithm most likely could work very well for all of these, I just believe
+the algorithm created in assignment 2 was not up to standard and if we had been able to make our own rather than recycling
+our old algorithm it would have performed much better.
