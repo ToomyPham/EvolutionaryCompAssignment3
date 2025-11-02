@@ -103,7 +103,7 @@ def aggregate(runs, budget):
 # plot fixed-budget results for a given instance and series data
 def plot_fixed_budget_for(inst, series_by_algo):
     if not series_by_algo: return # nothing to plot 
-    outdir = os.path.join("Exercise_2", "results", "plots", "fixed_budget_plots")
+    outdir = os.path.join("results", "fixed_budget_plots")
     os.makedirs(outdir, exist_ok=True)
     out_pdf = os.path.join(outdir, f"fixed_budget_plot_{inst}.pdf")
     with PdfPages(out_pdf) as pdf: # creates a PDF file for the results of that data set
@@ -115,7 +115,7 @@ def plot_fixed_budget_for(inst, series_by_algo):
             lower = [m - s for m, s in zip(mu, sd)]
             plt.fill_between(xs, lower, upper, alpha=0.2)
         plt.xlabel("Evaluations")
-        plt.ylabel("Best objective (mean ± std)")
+        plt.ylabel("Best fitness")
         plt.title(f"Fixed-Budget — Instance {inst}")
         plt.legend(fontsize=9)
         plt.tight_layout()
