@@ -1,4 +1,7 @@
 After implementing the code, the algorithm was tested and left to collect data for all the the MaxCoverage and MaxInfluence ploblems.
+The algorithm starts with a few random guesses and then keeps improving them by making small random changes, testing different combinations
+of nodes. after every change, it keeps the best solutions while maintaining high value while a having a low number of elements. This way it
+builds the best trade-offs, this is called the pareto front. The data are then saved in the Exercise_2 folder under the results folder.
 The data was then plotted for analysis and shows that the MaxCoverage displayed a consistant exponential growth and showed a steep curve 
 when the number of selected nodes were between 0 - 4. This shows that adding nodes gives large gains in coverage and displays a strong
 marginal return. Between 5-7 selected nodes, the improvement begins to slow down and begin showing deminishing returns. After 8 onwards,
