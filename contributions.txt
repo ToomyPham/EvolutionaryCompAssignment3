@@ -4,4 +4,3 @@
 3. tested and acquired data for Exercise 2
 3. implemented plotting to Exercise 2
 4. wrote the analysis for Exercise 2
-5. 
