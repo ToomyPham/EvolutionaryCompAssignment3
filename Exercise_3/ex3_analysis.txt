@@ -1,0 +1,26 @@
+For exercise 3, I developed both a single and multi objective EA suited for uniform-constraint optimisation of data through both
+generative AI and manual coding optimisations.
+
+The process begins by using a baseline (1+lambda) population based approach then methodically incorporating methods to 
+introduce diversity to the results, while also avoiding early convergence, which is a common issue when dealing with evolutionary
+binary sets of data. 
+
+For the single objective EA, I implemented a population based method using random replacement to maintain population diversity
+while also encouraging exploration across different solution sets. Conversely, the multi objective EA extended this further to
+evaluate for solutions on both coverage and cost, storing non dominated solutions in Pareto storage. A uniform selection 
+strategy (tournament) was use to balance sampling across this archive and prevented the algorithm from over focusing on a singular 
+region of the Pareto.
+
+When looking at the results, a clear performance gap between the two approaches is shown. For example, considering the instance
+2100: the single objective alg consistently achieved strong fitness values in the range of 405-424 across a 30 run sample, showcasing
+both reliability and stability in convergence within that 10,000 evaluation budget. Contrastingly, the multi objective counterpart 
+produced far weaker and inconsistent results, with many runs producing  an invalid or negative result. This indicates that the 
+multi objective archive and selection mechanism, though designed to promote diversity, struggled to effectively guide the search
+towards feasible solutions within the given budget. Further complexities such as Pareto tradeoffs likely slowed convergence; to 
+increase data quality, additional data pruning or a form of objective scaling may be required to increase performance.
+
+Overall, the single objective design proved far more effective for this instance, shown in its production of fast and stable
+optimisations. The mutli objective approach unfortunately requires further refinements to balance exploration with convergence
+efficiency.
+
+a1886664 - Manith Kandanearachchi
