@@ -12,15 +12,15 @@ strategy (tournament) was use to balance sampling across this archive and preven
 region of the Pareto.
 
 When looking at the results, a clear performance gap between the two approaches is shown. For example, considering the instance
-2100: the single objective alg consistently achieved strong fitness values in the range of 405-424 across a 30 run sample, showcasing
-both reliability and stability in convergence within that 10,000 evaluation budget. Contrastingly, the multi objective counterpart 
-produced far weaker and inconsistent results, with many runs producing  an invalid or negative result. This indicates that the 
-multi objective archive and selection mechanism, though designed to promote diversity, struggled to effectively guide the search
-towards feasible solutions within the given budget. Further complexities such as Pareto tradeoffs likely slowed convergence; to 
-increase data quality, additional data pruning or a form of objective scaling may be required to increase performance.
+2100 with population 10, the single objective EA consistently converged to a best fitness of ~38 across 25 evaluations, showcasing
+both reliability and stability in convergence within that 10,000 evaluation budget. Contrastingly, the multi-objective EA reached
+a lower fitness of ~41 but showed slower convergence and greater fluctuations across early evaluations, likely attributed to 
+the challenge of balancing of both Pareto diversity and convergence speed. Many runs showed early stagnation, highlighting that
+while the multi objective approach promotes exploration, it struggles to efficiently guide the search towards feasible solutions
+within that fixed budget.
 
-Overall, the single objective design proved far more effective for this instance, shown in its production of fast and stable
-optimisations. The mutli objective approach unfortunately requires further refinements to balance exploration with convergence
-efficiency.
+Overall, the single objective EA proved more effective for this instance, shown by its production of reliable, fast and stable
+optimisatoins. The multi objective approach, while ambitious in principle, requires further refinement, such as archive pruning or
+objective scaling of sorts, to better balance exploration and convergence efficiency.
 
 a1886664 - Manith Kandanearachchi
