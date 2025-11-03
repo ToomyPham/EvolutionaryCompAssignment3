@@ -4,3 +4,7 @@
 3. tested and acquired data for Exercise 2
 3. implemented plotting to Exercise 2
 4. wrote the analysis for Exercise 2
+
+Matt Edmonds-Wilson - a1850372
+1. Produced graphs for Exercise 4
+2. Wrote analysis for RLS, (1+1)EA, and our GA for Exercise 4

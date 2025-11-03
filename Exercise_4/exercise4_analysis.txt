@@ -1,0 +1,49 @@
+(1+1)EA
+
+The MaxCoverage graphs produced showed a similar trend first observed in the exercise 1. For all problems ranging from
+2100 to 2103, they all demonstrated a logarithmic growth in best fitness, only gaining marginal improvement at 100,000
+evaluations compared to the fitness gained from the first 10,000 evaluations.
+
+The MaxInfluence graphs, however, demonstrate the sudden jump found in MaxCoverage, but only after the 15,000-25,000
+evaluation mark. After the burst of fitness gain, all the graphs fall back into a logarithmic growth pattern. This
+growth that was undiscovered within the first 10,000 evaluations means that the 100,000 evaluations produced significantly
+better results. At 10,000 evaluations, all problems tested were still in the negative fitness range, but at 100,000
+evaluations all problems managed to find a positive best fitness, including some runs reaching almost 1000 fitness.
+
+In both datasets, it was clear that significantly increasing the evaluation count did not lead to major improvements to
+fitness, but did showcase a steadily increasing trend.
+
+GA
+
+Problems 2100 through to 2103 of the MaxCoverage dataset were once again extended into their logarithmic growth pattern
+after a burst of fitness gain. For problem 2103, this did not occur until after approximately 12,000 evaluations, so it
+was not recorded on the 10,000 evaluation graphs. Due to the nature of logarithmic graphs, the best fitness only increased
+by ~60 points across each problem, despite the 10x fitness evaluations.
+
+For problems 2200 through to 2203, they did once again begin to showcase a trend of suddenly increasing in fitness gain,
+but these did not occur until almost 100,000 evaluations had passed. Problem 2203 showcased the general trend the best,
+as it found a rapid increase in fitness at approximately 63,000 evaluations, and began to once again taper off once
+aproaching 100,000 evaluations. For these problems, an evaluation count of 1,000,000 or above might be more appropriate
+to find the behaviour and results of our GA on these datasets.
+
+In the MaxCoverage dataset, it did not appear to be overly benefitial to increasing the fitness evaluation count.
+However, for the MaxInfluence dataset, it was clear that 100,000 evaluations was not enough to find a proper best fitness.
+Such a large requirement for evaluation counts showcases that our GA takes too long to produce viable results. If the
+large evaluation counts can be supplied, then our GA will seemingly perform the best, as it was able to achieve the
+highest fitness count of any algorithm.
+
+RLS
+
+It was difficult to decern specific results from the RLS algorithm on the 2100 - 2103 problem datasets, as the algorithm
+did not produce any results above evaluation counts 2000. This may suggest that the RLS can find very quick results for
+some datasets, but struggles to improve even after large evaluation counts. 
+
+For the 2200 - 2203 problems, the same general trend was once again demonstrated, but in a much more condensed fashion.
+(1+1)EA and our GA both demonstrated some near explosive gains in fitness, but the RLS algorithm only gained marginal
+results after reaching a positive fitness level. Looking at some of the top runs on problem 2203 shows noteable fitness
+gain even nearing 100,000 evaluations, with some runs breaking the 1000 best fitness mark.
+
+In the MaxCoverage dataset, increasing the evaluation count did not have any major impact on the results.
+In the MaxInfluence dataset, increasing the evaluation count did produce a noticeable increase in fitness, but there
+was a variety in the scale of this increase. Some datasets only found a very minor increase, while others found
+consistent growth even after tens of thousands of evaluations.
