@@ -18,3 +18,8 @@ Patrick Chapman - a1889461
 1. Exercise 1 algorithms
 2. Exercise 1 graphs
 3. Exercise 1 Analysis
+
+Manith Kandanearachchi - a1886664
+1. Exercise 3 algorithm
+2. Exercise 3 optimisation + graphing
+3. Exercise 3 analysis
