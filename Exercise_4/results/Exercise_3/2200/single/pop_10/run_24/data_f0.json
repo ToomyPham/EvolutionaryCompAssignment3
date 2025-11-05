@@ -1,0 +1,21 @@
+{
+  "algorithm_name": "single",
+  "instance": 2200,
+  "population": 10,
+  "run_id": 24,
+  "dimension": 40,
+  "budget": 100000,
+  "seed": 1354,
+  "selection": "tournament",
+  "lines_written": 100019,
+  "best_so_far": 74.0,
+  "start_time": "2025-11-02T15:39:13.735038",
+  "end_time": "2025-11-02T15:39:14.231853",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python_version": "3.11.14",
+  "hostname": "DESKTOP-UN60RSS",
+  "variant": "populationEA",
+  "elapsed_seconds": 0.49654221534729004,
+  "algorithm_type": "PopulationEA",
+  "run_summary_best": 46.0
+}

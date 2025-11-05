@@ -1,0 +1,21 @@
+{
+  "algorithm_name": "multi",
+  "instance": 2201,
+  "population": 50,
+  "run_id": 6,
+  "dimension": 41,
+  "budget": 100000,
+  "seed": 1856,
+  "selection": "uniform",
+  "lines_written": 100000,
+  "best_so_far": 77.0,
+  "start_time": "2025-11-02T16:13:12.193344",
+  "end_time": "2025-11-02T16:13:16.107265",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python_version": "3.11.14",
+  "hostname": "DESKTOP-UN60RSS",
+  "variant": "PopulationGSEMO",
+  "elapsed_seconds": 3.913597583770752,
+  "algorithm_type": "PopulationGSEMO",
+  "run_summary_best": 10.0
+}
