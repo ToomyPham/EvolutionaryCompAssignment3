@@ -47,3 +47,28 @@ In the MaxCoverage dataset, increasing the evaluation count did not have any maj
 In the MaxInfluence dataset, increasing the evaluation count did produce a noticeable increase in fitness, but there
 was a variety in the scale of this increase. Some datasets only found a very minor increase, while others found
 consistent growth even after tens of thousands of evaluations.
+
+GSEMO 
+
+Comparing the results of 10,000 to 100,000 evaluations there was little to no difference in the best fitness for problems 
+in the 210X series. This can be seen in both graphs reaching a platoue of their optimal solution well below the 10,000 evolutions
+threashold. Comparativly the 220X series clearly benifited from the additonal runs as they continues to increase the fitness,
+most would barely clarify as having a platoue as it was still increasing with 100,000 runs. 
+
+The GSEMO algorithm showed strong potential for finding optimal solutions as in comparison to other algorithms which still platoued
+when given the extra budget GSEMO was able to find improvements. The GESMO struggled concerning runtime as expecially when finding 
+improvements it would take over an hour per run for some datasets. This is a major limiting factor in any large scale practical sense. 
+
+Single and Multi Instance
+
+The single and multi instance algorithms operated very similarly, with the multi consistnatly having the slight edge. Despite this edge
+they would act in the same ways both showing near identical shape. For this reason they will be analysed together. 
+
+When comparing the results of the single and multi instance algorithm in 10,000 to 100,000 budget the increased budget showed a steady 
+increase in fitness. Both the 210X and 220X series problems showed the same steady increse in fitness as a result of increasing the budget.
+This shows that the algorithms are not good at escaping the local optimal. Unlike the GSEMO where there would be large jumps in improvement
+the single and multi instance algorithms had no jumps apart from the initial improvement.
+
+These algorithms had a positive factor of using very few resources to generate and solving with a fast runtime. The graphs show that once
+they find an acceptable solution it is almost impossible to break free from this as there is little progress made past 5000 evolutions.
+While this algorithm is useful for generating a basic soltion it is not nearly as powerful as others like the GSEMO. 
