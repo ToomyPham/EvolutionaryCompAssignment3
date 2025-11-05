@@ -1,7 +1,0 @@
-instance,alg,pop,diversity,run,best,n_evals,time,selection
-2100,single,20,random_replacement,0,415.0,10000,0.8299894332885742,
-2100,multi,20,,0,,10000,1.3907253742218018,uniform
-2100,single,20,random_replacement,1,-7.0,10000,0.4802360534667969,
-2100,multi,20,,1,,10000,1.275789499282837,uniform
-2100,single,20,random_replacement,2,412.0,10000,0.6984422206878662,
-2100,multi,20,,2,-34.0,10000,1.309098482131958,uniform
