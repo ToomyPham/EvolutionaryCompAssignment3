@@ -13,3 +13,8 @@ Kurt Brice - a1887009
 1. Modified exercise 1 code for proper ioh logging
 2. Generated graphs for exercise 4 (from 2 and 3)
 3. Modified exercise 2 code for proper ioh logging
+
+Patrick Chapman - a1889461
+1. Exercise 1 algorithms
+2. Exercise 1 graphs
+3. Exercise 1 Analysis
