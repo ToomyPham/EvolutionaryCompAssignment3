@@ -8,3 +8,8 @@
 Matt Edmonds-Wilson - a1850372
 1. Produced graphs for Exercise 4
 2. Wrote analysis for RLS, (1+1)EA, and our GA for Exercise 4
+
+Kurt Brice - a1887009
+1. Modified exercise 1 code for proper ioh logging
+2. Generated graphs for exercise 4 (from 2 and 3)
+3. Modified exercise 2 code for proper ioh logging
