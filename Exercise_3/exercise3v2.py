@@ -92,6 +92,7 @@ class IOHLogger:
             data_f0.dat
             data_f0.json
     """
+    # initialise the logger
     def __init__(self, base_dir: str, instance: int, algorithm: str, population: int, run_id: int,
                  n: int, budget: int, seed: Optional[int], selection: Optional[str], extra_meta: Optional[Dict] = None):
         self.base_dir = base_dir
@@ -227,10 +228,10 @@ class SubmodularIOHProblem:
         # cost function: uniform cost = sum bits
         self.cost_fn = lambda x: int(sum(x))
 
-    def register_callback(self, cb: Callable[[int, float], None]) -> None:
+    def register_callback(self, cb: Callable[[int, float], None]) -> None: # register evaluation callback
         self._callbacks.append(cb)
 
-    def evaluate(self, x: List[int]) -> float:
+    def evaluate(self, x: List[int]) -> float: # evaluate x
         """Evaluate x and call callbacks with (eval_count, value)."""
         self.eval_count += 1
         if self.use_ioh and hasattr(self, "_prob") and self._prob is not None:
@@ -300,7 +301,7 @@ class PopulationEA:
             x, fitness, cost, feasible = self.evaluate_with_repair(x)
             self.pop.append((x, fitness, cost, feasible))
 
-    def evaluate_with_repair(self, x: List[int]) -> Tuple[List[int], float, int, bool]:
+    def evaluate_with_repair(self, x: List[int]) -> Tuple[List[int], float, int, bool]: # evaluate x, repair if needed
         cost = self.problem.cost_fn(x)
         B = getattr(self.problem, "budget", None)
         feasible = True if (B is None) else (cost <= B)
@@ -310,7 +311,7 @@ class PopulationEA:
         if cost <= B:
             return x, fitness, cost, True
 
-        if self.repair == "simple_trim":
+        if self.repair == "simple_trim": # simple trim: remove ones until feasible
             y = x.copy()
             ones = [i for i, xi in enumerate(y) if xi]
             random.shuffle(ones)
@@ -342,7 +343,7 @@ class PopulationEA:
         else:
             return x, -1e9, cost, False
 
-    def fitness_sharing_adjusted(self) -> List[float]:
+    def fitness_sharing_adjusted(self) -> List[float]: # adjust fitness via fitness sharing
         sigma = self.sharing_sigma
         alpha = self.sharing_alpha
         adjusted = []
@@ -357,7 +358,7 @@ class PopulationEA:
             adjusted.append(fi / denom)
         return adjusted
 
-    def select_parents(self) -> List[List[int]]:
+    def select_parents(self) -> List[List[int]]: # select parents for mutation
         parents: List[List[int]] = []
         if self.diversity == "random_replacement":
             for _ in range(self.mu):
@@ -397,18 +398,18 @@ class PopulationEA:
                 parents.append(random.choice(self.pop)[0])
         return parents
 
-    def replacement(self, offspring: List[Tuple[List[int], float, int, bool]]) -> None:
+    def replacement(self, offspring: List[Tuple[List[int], float, int, bool]]) -> None: # replace population with offspring
         combined = self.pop + offspring
         combined.sort(key=lambda t: (1 if t[3] else 0, t[1]), reverse=True)
         self.pop = combined[: self.mu]
 
-    def best_feasible(self) -> Optional[Tuple[List[int], float, int, bool]]:
+    def best_feasible(self) -> Optional[Tuple[List[int], float, int, bool]]: # best feasible in population
         feas = [ind for ind in self.pop if ind[3]]
         if not feas:
             return None
         return max(feas, key=lambda t: t[1])
 
-    def run(self, verbose: bool = False) -> Dict[str, Any]:
+    def run(self, verbose: bool = False) -> Dict[str, Any]: # main run loop
         if not hasattr(self.problem, "budget"):
             raise ValueError("Problem must have attribute 'budget' (uniform constraint B).")
 
@@ -444,13 +445,13 @@ class PopulationEA:
 # -----------------------------
 # PopulationGSEMO (multi-objective population-based)
 # -----------------------------
-def dominates(a_obj: Tuple[float, ...], b_obj: Tuple[float, ...]) -> bool:
+def dominates(a_obj: Tuple[float, ...], b_obj: Tuple[float, ...]) -> bool: # check if a dominates b
     assert len(a_obj) == len(b_obj)
     ge = all(a >= b for a, b in zip(a_obj, b_obj))
     gt = any(a > b for a, b in zip(a_obj, b_obj))
     return ge and gt
 
-def crowding_distance(archive: List[Tuple[List[int], Tuple[float, ...], dict]]) -> List[float]:
+def crowding_distance(archive: List[Tuple[List[int], Tuple[float, ...], dict]]) -> List[float]: # compute crowding distances
     m = len(archive)
     if m == 0:
         return []
@@ -499,7 +500,7 @@ class PopulationGSEMO:
         c0 = self.problem.cost_fn(x0)
         self.archive = [(x0, (f0, -float(c0)), {"f": f0, "c": c0})]
 
-    def select_parent(self, t: int) -> List[int]:
+    def select_parent(self, t: int) -> List[int]: # select parent from archive
         if len(self.archive) == 0:
             return random_bitstring(self.n, p=0.1)
         if self.selection == "uniform":
@@ -526,7 +527,7 @@ class PopulationGSEMO:
         else:
             return random.choice(self.archive)[0]
 
-    def update_archive(self, cand: Tuple[List[int], Tuple[float, float], dict]) -> bool:
+    def update_archive(self, cand: Tuple[List[int], Tuple[float, float], dict]) -> bool: # update archive with candidate
         x, obj, meta = cand
         new_archive: List[Tuple[List[int], Tuple[float, float], dict]] = []
         dominated_flag = False
@@ -550,7 +551,7 @@ class PopulationGSEMO:
         self.archive = new_archive
         return True
 
-    def best_feasible(self) -> Optional[Tuple[List[int], Tuple[float, float], dict]]:
+    def best_feasible(self) -> Optional[Tuple[List[int], Tuple[float, float], dict]]: # best feasible in archive
         B = getattr(self.problem, "budget", None)
         feas = []
         for x, obj, meta in self.archive:
