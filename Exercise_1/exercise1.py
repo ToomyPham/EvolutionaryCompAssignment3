@@ -5,6 +5,7 @@ from typing import Callable, Dict, List, Tuple
 import numpy as np
 from ioh import get_problem, ProblemClass, logger
 
+# Get family for cleaner ui
 def graph_family(pid: int) -> str:
     if 2100 <= pid <= 2103: return "MaxCoverage"
     if 2200 <= pid <= 2203: return "MaxInfluence"
@@ -14,17 +15,17 @@ def graph_family(pid: int) -> str:
 def make_logger(root: str, folder: str, algo_name: str, algo_info: str = ""):
     return logger.Analyzer(
         root=root,
-        folder_name=folder,         # <-- nested path lives here
+        folder_name=folder,
         algorithm_name=algo_name,
-        algorithm_info=algo_info,   # optional; shows in IOHanalyzer
+        algorithm_info=algo_info,
         store_positions=False,
     )
 
 def robust_attach(problem, L) -> None:
     try:
-        L.attach_problem(problem)   # newer API
+        L.attach_problem(problem)
     except Exception:
-        problem.attach_logger(L)    # older API
+        problem.attach_logger(L)
 
 def robust_detach(problem, L) -> None:
     try: problem.detach_logger()
@@ -32,6 +33,7 @@ def robust_detach(problem, L) -> None:
     try: L.close()
     except Exception: pass
 
+# Problems to be solved
 PROBLEM_IDS = [
     2100, 2101, 2102, 2103,
     2200, 2201, 2202, 2203,
@@ -130,6 +132,7 @@ class AlgoSpec:
 
 
 def run_all(root: str, runs: int, budget: int, seed: int | None):
+    # Set rng for the run
     rng_master = np.random.default_rng(seed)
 
     algos: List[AlgoSpec] = [
@@ -139,12 +142,11 @@ def run_all(root: str, runs: int, budget: int, seed: int | None):
     ]
 
     for pid in PROBLEM_IDS:
-        # create the problem ONCE per pid (reuse across runs via reset)
         problem = get_problem(pid, problem_class=ProblemClass.GRAPH)
         fam = graph_family(pid)
 
         for algo in algos:
-            # create ONE logger per (pid, algo)
+            # Setup folders and attach the logger
             folder = f"{algo.name}/{fam}/F{pid}"
             algo_info = f"{algo.name} on {fam} F{pid}"
             L = make_logger(root, folder, algo.name, algo_info)
@@ -160,7 +162,7 @@ def run_all(root: str, runs: int, budget: int, seed: int | None):
 
             robust_attach(problem, L)
 
-            # multiple runs into the SAME IOH dataset
+            # Run multiple times inside the dataset
             for r in range(1, runs + 1):
                 run_seed = int(rng_master.integers(0, 2**63 - 1))
                 rng = np.random.default_rng(run_seed)
